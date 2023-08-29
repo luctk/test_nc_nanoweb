@@ -7,27 +7,21 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function displayEmployeeTree()
     {
-        $employees = Employee::all();
-        function buildTree($employees, $manageId = null)
-        {
-            $tree = [];
-            foreach ($employees as $employee) {
-                if ($employee->manager_id == $manageId) {
-                    $subordinates = buildTree($employees, $employee->id);
-                    $tree[] = [
-                        'id' => $employee->id,
-                        'name' => $employee->name,
-                        'subordinates' => $subordinates
-                    ];
-                }
-            }
-            return $tree;
+        $rootEmployee = Employee::whereNull('manager_id')->first();
+        if ($rootEmployee) {
+            $this->displaySubtree($rootEmployee, 0);
         }
-
-        $tree = buildTree($employees);
-        return view('employees.index',compact('tree'));
-
     }
+
+    private function displaySubtree($employee, $level)
+    {
+        $indentation = str_repeat('-', $level);
+        echo $indentation.$employee->name.'('.$employee->taikhoan .')'. "số điểm:".$employee->tinhTongDiem()."<br>";
+        foreach ($employee->employees as $subEmployee) {
+            $this->displaySubtree($subEmployee, $level + 1);
+        }
+    }
+
 }

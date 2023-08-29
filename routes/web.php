@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/index',[\App\Http\Controllers\EmployeeController::class,'index']);
+Route::get('/index',[EmployeeController::class,'displayEmployeeTree']);

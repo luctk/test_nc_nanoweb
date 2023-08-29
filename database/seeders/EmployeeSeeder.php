@@ -13,28 +13,59 @@ class EmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $rootEmployee=Employee::create([
-            'name'=>'trinh khac luc',
+        $employees = [
+            [
+                'name' => 'Lực',
+                'taikhoan' => 10,
+                'subordinates' => [
+                    [
+                        'name' => 'Lực 1',
+                        'taikhoan' => 15,
+                        'subordinates' => [],
+                    ],
+                    [
+                        'name' => 'Lực 2',
+                        'taikhoan' => 10,
+                        'subordinates' => [
+                            [
+                                'name' => 'Lực 3',
+                                'taikhoan' => 5,
+                                'subordinates' => [],
+                            ],
+                            [
+                                'name' => 'Lực 4',
+                                'taikhoan' => 3,
+                                'subordinates' => [],
+                            ],
+                        ],
+                    ],
+
+
+                ],
+            ],
+        ];
+
+        foreach ($employees as $employeeData) {
+            $this->createEmployee($employeeData);
+        }
+
+    }
+
+    private function createEmployee($data, $manager = null)
+    {
+        $employee = new Employee([
+            'name' => $data['name'],
+            'taikhoan' => $data['taikhoan'],
         ]);
-        $emloyee1=Employee::create([
-            'name'=>'trinh khac luc 1',
-            'manager_id'=>$rootEmployee->id
-        ]);
-        $emloyee2=Employee::create([
-            'name'=>'trinh khac luc 2',
-            'manager_id'=>$rootEmployee->id
-        ]);
-        $emloyee3=Employee::create([
-            'name'=>'trinh khac luc 3',
-            'manager_id'=>$emloyee1->id
-        ]);
-        $emloyee4=Employee::create([
-            'name'=>'trinh khac luc 4',
-            'manager_id'=>$emloyee3->id
-        ]);
-        $emloyee5=Employee::create([
-            'name'=>'trinh khac luc 5',
-            'manager_id'=>$emloyee3->id
-        ]);
+
+        if ($manager) {
+            $manager->employees()->save($employee);
+        } else {
+            $employee->save();
+        }
+
+        foreach ($data['subordinates'] as $subordinateData) {
+            $this->createEmployee($subordinateData, $employee);
+        }
     }
 }
